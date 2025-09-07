@@ -1,44 +1,69 @@
-# NFL Betting Helper
+# React + TypeScript + Vite
 
-Predict upcoming week's NFL games and player performance using historical data.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## What We're Building
+Currently, two official plugins are available:
 
-**Game Predictions:**
-- Moneyline (who wins)
-- Point spread 
-- Over/under totals
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-**Player Predictions (all offensive skill positions):**
-- Rushing yards, receiving yards, touchdowns
-- QB passing stats
+## Expanding the ESLint configuration
 
-## Technical Approach
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- **Models**: Test both statistical and ML approaches
-- **Data**: All historical NFL data (handled on separate branch)
-- **Generation**: Manual runs using most current data available
-- **Storage**: SQLite database
-- **API**: FastAPI with prediction endpoints
+```js
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## System Components
+      // Remove tseslint.configs.recommended and replace with this
+      ...tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      ...tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      ...tseslint.configs.stylisticTypeChecked,
 
-### Core Engine
-- Multiple model implementations (statistical + ML)
-- Model comparison and selection framework
-- Prediction confidence scoring
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-### API Endpoints
-- `/predict/game/{team1}/{team2}` - game-level predictions
-- `/predict/players/{game_id}` - all offensive players for a game
-- `/predict/week` - full week predictions
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### Database Schema
-- Games (historical + upcoming)
-- Player stats (all offensive positions)
-- Team performance metrics
-- Prediction results for backtesting
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## Success Metric
-
-Build multiple model approaches and determine which performs best through backtesting.
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
