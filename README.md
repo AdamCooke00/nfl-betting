@@ -1,140 +1,73 @@
-# NFL Betting Backend System
+# NFL Betting Analysis System
 
-Autonomous data pipeline for NFL betting analysis with intelligent data fetching and normalized database storage.
+Full-stack NFL betting analysis platform with autonomous data pipeline and interactive dashboard.
 
-## Features
+## Project Structure
 
-- Autonomous operation (no configuration needed)
-- Smart data fetching (only fetches missing/updated data)
-- 2-week revision window for recent games
-- Seasonal awareness (automatically detects current NFL season/week)
-- Normalized 3NF database schema (1,425+ games across 2020-2025 seasons)
-- High-level query interface for betting analysis
-- Automatic scheduling during NFL season
+```
+nfl-betting/
+├── backend/          # Autonomous NFL data pipeline
+└── frontend/         # React betting dashboard
+```
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.8+
-- SQLite (included with Python)
-
-### Installation
-
+### Backend (Data Pipeline)
 ```bash
 cd backend
 pip install -r requirements.txt
+python autonomous_pipeline.py  # Creates full database in ~14 seconds
 ```
 
-### Basic Usage
-
-```python
-from autonomous_pipeline import AutonomousNFLPipeline
-from queries import NFLQueries
-
-# Run autonomous update
-pipeline = AutonomousNFLPipeline()
-result = pipeline.run()
-
-# Query data
-queries = NFLQueries()
-recent_games = queries.get_games_by_week(2024, 2)
-```
-
-## Architecture
-
-### Core Components
-
-- **autonomous_pipeline.py**: Autonomous data pipeline that knows what to do
-- **database.py**: SQLAlchemy models and normalized schema (3NF)
-- **etl_pipeline_db.py**: ETL processing engine for data transformation
-- **queries.py**: High-level database query interface
-- **scheduler.py**: Automatic scheduling for production use
-
-### Database Schema
-
-```
-games (1,425 records)
-├── betting_lines (spread, totals, moneylines)
-├── game_conditions (stadium, weather, referee)
-├── team_performances (per-team game stats)
-└── team_stats_snapshot (rolling averages)
-```
-
-### Smart Fetching Logic
-
-1. **Historical seasons (2020-2023)**: Only fetch if completely missing
-2. **Current season**: Fetch missing games + recent games within 2-week window
-3. **Future games**: Fetch schedule data only
-
-## Usage Examples
-
-### Run Autonomous Update
-```python
-pipeline = AutonomousNFLPipeline()
-result = pipeline.run()
-print(f"Updated {result['games_updated']} games")
-```
-
-### Query Team Performance
-```python
-queries = NFLQueries()
-chiefs_games = queries.get_team_games("KC", season=2024)
-```
-
-### Get Betting Analysis
-```python
-# Get games with betting lines
-games_with_lines = queries.get_games_with_betting_lines(season=2024, week=2)
-
-# Get team statistics
-team_stats = queries.get_team_rolling_stats("KC", season=2024, week=10)
-```
-
-## Scheduling
-
-### Windows (Batch File)
+### Frontend (Dashboard)
 ```bash
-# Run once
-run_pipeline.bat
+cd frontend
+npm install
+npm run dev
 ```
 
-### Python Scheduler
-```python
-# Automatic scheduling (4 hours during season, daily off-season)
-python scheduler.py
-```
+## Features
 
-### Linux (Systemd Service)
-```bash
-# Setup service
-sudo cp nfl-pipeline.service /etc/systemd/system/
-sudo systemctl enable nfl-pipeline
-sudo systemctl start nfl-pipeline
-```
+### 🤖 Autonomous Backend
+- **Zero-config startup**: Just run and it knows what to do
+- **Smart data fetching**: Only gets missing/updated games
+- **Season awareness**: Automatically detects current NFL week
+- **Complete database**: 1,425+ games with betting data (2020-2025)
+- **Fast execution**: 1.7s maintenance, 14s full bootstrap
 
-## Configuration
+### 📊 Interactive Frontend
+- **Real-time dashboard**: Live betting odds and predictions
+- **Team analytics**: Performance charts and trends
+- **Game analysis**: Detailed betting breakdowns
+- **Responsive design**: Works on all devices
 
-Default database: `nfl_autonomous.db` (1MB SQLite file)
+## Documentation
 
-Customize database path:
-```python
-pipeline = AutonomousNFLPipeline(db_path="custom_path.db")
-```
+- **[Backend Documentation](backend/README.md)** - Data pipeline, database schema, and scheduling
+- **[Frontend Documentation](frontend/README.md)** - React components, development, and deployment
 
-## Troubleshooting
+## Development Workflow
 
-### Common Issues
+1. **Backend**: Run `python autonomous_pipeline.py` to populate database
+2. **Frontend**: Run `npm run dev` to start dashboard
+3. **Data Updates**: Pipeline automatically fetches new games and updates scores
 
-**Import Error**: Ensure all dependencies installed: `pip install -r requirements.txt`
+## Tech Stack
 
-**Database Lock**: Close any SQLite browser connections to `nfl_autonomous.db`
+- **Backend**: Python, SQLAlchemy, SQLite, nfl_data_py
+- **Frontend**: React 19, TypeScript, Tailwind CSS, Vite, SWR, Recharts
+- **Database**: Normalized SQLite with betting lines, team stats, and conditions
 
-**API Failures**: Pipeline gracefully handles nfl_data_py API timeouts
+## Production Deployment
 
-**Missing Data**: Run `pipeline.run()` to fetch missing games
+### Backend Scheduling
+- **Windows**: Use `run_pipeline.bat` with Task Scheduler
+- **Cross-platform**: Run `python scheduler.py` for continuous operation
 
-### Database Verification
-```bash
-sqlite3 nfl_autonomous.db "SELECT COUNT(*) FROM games;"
-# Expected: 1425+ games
-```
+### Frontend Deployment
+- **Development**: `npm run dev`
+- **Production**: `npm run build` then deploy `dist/` folder
+
+---
+
+*This project uses an autonomous data pipeline that requires no configuration - it automatically knows what data to fetch based on the current NFL season and existing database state.*

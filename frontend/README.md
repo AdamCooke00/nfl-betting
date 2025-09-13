@@ -1,6 +1,6 @@
 # NFL Betting Frontend
 
-React-based betting dashboard for NFL game analysis and predictions.
+Interactive React dashboard for NFL betting analysis and predictions.
 
 ## Prerequisites
 
