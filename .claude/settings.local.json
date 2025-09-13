@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(\"./../.venv/Scripts/activate\")",
+      "Bash(npm run format:check:*)",
+      "Bash(npm run build:*)",
+      "Bash(sqlite3:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
