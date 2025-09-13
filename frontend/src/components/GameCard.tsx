@@ -1,4 +1,6 @@
 import type { BettingData } from '../types';
+import { Card, Stack, Grid, Text, Badge, Divider } from './ui';
+import { StatCard } from './composite';
 
 interface GameCardProps {
   bettingData: BettingData;
@@ -29,107 +31,112 @@ const GameCard = ({ bettingData }: GameCardProps) => {
     }
   };
 
+  const getConfidenceBadgeVariant = (confidence: number) => {
+    if (confidence > 0.7) return 'success';
+    if (confidence > 0.6) return 'warning';
+    return 'error';
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    if (status === 'scheduled') return 'primary';
+    if (status === 'in_progress') return 'warning';
+    return 'neutral';
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-sm text-gray-500">Week {game.week}</div>
-        <div className="text-sm text-gray-500">{formatDate(game.gameTime)}</div>
-      </div>
+    <Card variant="elevated">
+      <Stack direction="column" gap="md">
+        {/* Header */}
+        <Stack direction="row" justify="between" align="center">
+          <Text size="sm" color="secondary">
+            Week {game.week}
+          </Text>
+          <Text size="sm" color="secondary">
+            {formatDate(game.gameTime)}
+          </Text>
+        </Stack>
 
-      {/* Teams */}
-      <div className="space-y-3 mb-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <span className="font-semibold text-gray-900">
-              {game.awayTeam.abbreviation}
-            </span>
-            <span className="text-gray-600">{game.awayTeam.city}</span>
-          </div>
-          <div className="text-sm text-gray-500">
-            {getSpreadDisplay(odds.spread, false)}
-          </div>
-        </div>
+        {/* Teams */}
+        <Stack direction="column" gap="sm">
+          <Stack direction="row" justify="between" align="center">
+            <Stack direction="row" gap="sm" align="center">
+              <Text weight="semibold">{game.awayTeam.abbreviation}</Text>
+              <Text color="secondary">{game.awayTeam.city}</Text>
+            </Stack>
+            <Text size="sm" color="secondary">
+              {getSpreadDisplay(odds.spread, false)}
+            </Text>
+          </Stack>
 
-        <div className="text-center text-gray-400 text-sm">at</div>
+          <Text size="sm" color="secondary" align="center">
+            at
+          </Text>
 
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <span className="font-semibold text-gray-900">
-              {game.homeTeam.abbreviation}
-            </span>
-            <span className="text-gray-600">{game.homeTeam.city}</span>
-          </div>
-          <div className="text-sm text-gray-500">
-            {getSpreadDisplay(odds.spread, true)}
-          </div>
-        </div>
-      </div>
+          <Stack direction="row" justify="between" align="center">
+            <Stack direction="row" gap="sm" align="center">
+              <Text weight="semibold">{game.homeTeam.abbreviation}</Text>
+              <Text color="secondary">{game.homeTeam.city}</Text>
+            </Stack>
+            <Text size="sm" color="secondary">
+              {getSpreadDisplay(odds.spread, true)}
+            </Text>
+          </Stack>
+        </Stack>
 
-      {/* Odds */}
-      <div className="border-t border-gray-200 pt-4 mb-4">
-        <div className="grid grid-cols-3 gap-4 text-sm">
-          <div className="text-center">
-            <div className="text-gray-500">O/U</div>
-            <div className="font-semibold">{odds.overUnder}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-gray-500">Away ML</div>
-            <div className="font-semibold">
-              {formatMoneyline(odds.awayMoneyline)}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-gray-500">Home ML</div>
-            <div className="font-semibold">
-              {formatMoneyline(odds.homeMoneyline)}
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Odds */}
+        <Divider spacing="none" />
+        <Grid cols={3} gap="md">
+          <StatCard label="O/U" value={odds.overUnder} size="sm" />
+          <StatCard
+            label="Away ML"
+            value={formatMoneyline(odds.awayMoneyline)}
+            size="sm"
+          />
+          <StatCard
+            label="Home ML"
+            value={formatMoneyline(odds.homeMoneyline)}
+            size="sm"
+          />
+        </Grid>
 
-      {/* Predictions */}
-      {predictions && (
-        <div className="border-t border-gray-200 pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              Prediction
-            </span>
-            <span
-              className={`text-sm px-2 py-1 rounded ${
-                predictions.confidence > 0.7
-                  ? 'bg-green-100 text-green-800'
-                  : predictions.confidence > 0.6
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-              }`}
-            >
-              {Math.round(predictions.confidence * 100)}% confidence
-            </span>
-          </div>
-          <div className="text-sm text-gray-600 mb-1">
-            Pick:{' '}
-            <span className="font-semibold">{predictions.predictedWinner}</span>
-          </div>
-          <div className="text-xs text-gray-500">{predictions.reasoning}</div>
-        </div>
-      )}
+        {/* Predictions */}
+        {predictions && (
+          <>
+            <Divider spacing="none" />
+            <Stack direction="column" gap="xs">
+              <Stack direction="row" justify="between" align="center">
+                <Text size="sm" weight="medium" color="secondary">
+                  Prediction
+                </Text>
+                <Badge
+                  variant={getConfidenceBadgeVariant(predictions.confidence)}
+                  size="sm"
+                >
+                  {Math.round(predictions.confidence * 100)}% confidence
+                </Badge>
+              </Stack>
+              <Stack direction="row" gap="xs" align="center">
+                <Text size="sm" color="secondary">
+                  Pick:
+                </Text>
+                <Text size="sm" weight="semibold">
+                  {predictions.predictedWinner}
+                </Text>
+              </Stack>
+              <Text size="xs" color="secondary">
+                {predictions.reasoning}
+              </Text>
+            </Stack>
+          </>
+        )}
 
-      {/* Status */}
-      <div className="mt-4 pt-3 border-t border-gray-200">
-        <span
-          className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-            game.status === 'scheduled'
-              ? 'bg-blue-100 text-blue-800'
-              : game.status === 'in_progress'
-                ? 'bg-orange-100 text-orange-800'
-                : 'bg-gray-100 text-gray-800'
-          }`}
-        >
+        {/* Status */}
+        <Divider spacing="none" />
+        <Badge variant={getStatusBadgeVariant(game.status)} size="sm">
           {game.status.replace('_', ' ').toUpperCase()}
-        </span>
-      </div>
-    </div>
+        </Badge>
+      </Stack>
+    </Card>
   );
 };
 
