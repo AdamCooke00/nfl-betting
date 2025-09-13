@@ -11,6 +11,8 @@ export { default as Badge } from './Badge';
 
 // Interactive Components
 export { default as Button } from './Button';
+export { default as BettingButton } from './BettingButton';
+export { Select, SelectItem } from './Select';
 
 // Export all types
 export * from './Container/Container.types';
@@ -21,3 +23,5 @@ export * from './Card/Card.types';
 export * from './Text/Text.types';
 export * from './Badge/Badge.types';
 export * from './Button/Button.types';
+export * from './BettingButton/BettingButton.types';
+export * from './Select/Select.types';

@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import { fetcher, apiEndpoints } from '../lib/api';
-import { mockBettingData } from '../lib/mockData'; // DELETE THIS LINE when connecting to real backend
+import { mockBettingData, mockBettingDataByWeek } from '../lib/mockData'; // DELETE THIS LINE when connecting to real backend
 import type { BettingData } from '../types';
 
 export const useBettingData = (week?: number) => {
@@ -13,7 +13,11 @@ export const useBettingData = (week?: number) => {
       : apiEndpoints.bettingData,
     useMockData ? null : fetcher, // Use null fetcher for mock data
     {
-      fallbackData: useMockData ? mockBettingData : undefined, // Use mock data in development
+      fallbackData: useMockData
+        ? week
+          ? mockBettingDataByWeek[week] || []
+          : mockBettingData
+        : undefined,
       refreshInterval: 30000, // Refresh every 30 seconds
       revalidateOnFocus: true,
     }

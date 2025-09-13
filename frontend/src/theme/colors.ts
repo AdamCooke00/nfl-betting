@@ -46,6 +46,24 @@ export const colors = {
   // Background colors
   white: 'bg-white text-white border-white',
   transparent: 'bg-transparent text-transparent border-transparent',
+
+  // Chart colors (for consistent visualization)
+  chart: {
+    blue: '#3B82F6',
+    red: '#EF4444',
+    green: '#10B981',
+    yellow: '#F59E0B',
+    purple: '#8B5CF6',
+    gray: '#6B7280',
+  },
+
+  // Interactive states
+  interactive: {
+    hover: 'hover:bg-gray-100',
+    focus: 'focus:outline-none focus:ring-2 focus:ring-blue-500',
+    active: 'active:bg-gray-200',
+    disabled: 'disabled:opacity-50 disabled:cursor-not-allowed',
+  },
 } as const;
 
 // Helper function to extract just the background class

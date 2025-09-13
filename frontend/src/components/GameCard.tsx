@@ -1,15 +1,24 @@
+import { useState, memo, useCallback } from 'react';
 import type { BettingData } from '../types';
-import { Card, Stack, Grid, Text, Badge, Divider } from './ui';
+import { Card, Stack, Grid, Text, Badge, Divider, Button } from './ui';
 import { StatCard } from './composite';
+import GameCardDetails from './GameCardDetails';
+import { useBettingCalculations } from '../hooks/useBettingCalculations';
+import {
+  getConfidenceBadgeVariant,
+  getStatusBadgeVariant,
+} from '../lib/betting';
 
 interface GameCardProps {
   bettingData: BettingData;
 }
 
 const GameCard = ({ bettingData }: GameCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const { game, odds, predictions } = bettingData;
+  const { formatMoneyline, getSpreadDisplay } = useBettingCalculations();
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
@@ -17,31 +26,7 @@ const GameCard = ({ bettingData }: GameCardProps) => {
       hour: 'numeric',
       minute: '2-digit',
     });
-  };
-
-  const formatMoneyline = (line: number) => {
-    return line > 0 ? `+${line}` : `${line}`;
-  };
-
-  const getSpreadDisplay = (spread: number, isHome: boolean) => {
-    if (isHome) {
-      return spread > 0 ? `+${spread}` : `${spread}`;
-    } else {
-      return spread > 0 ? `-${spread}` : `+${Math.abs(spread)}`;
-    }
-  };
-
-  const getConfidenceBadgeVariant = (confidence: number) => {
-    if (confidence > 0.7) return 'success';
-    if (confidence > 0.6) return 'warning';
-    return 'error';
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    if (status === 'scheduled') return 'primary';
-    if (status === 'in_progress') return 'warning';
-    return 'neutral';
-  };
+  }, []);
 
   return (
     <Card variant="elevated">
@@ -64,7 +49,7 @@ const GameCard = ({ bettingData }: GameCardProps) => {
               <Text color="secondary">{game.awayTeam.city}</Text>
             </Stack>
             <Text size="sm" color="secondary">
-              {getSpreadDisplay(odds.spread, false)}
+              {getSpreadDisplay(-odds.spread)}
             </Text>
           </Stack>
 
@@ -78,7 +63,7 @@ const GameCard = ({ bettingData }: GameCardProps) => {
               <Text color="secondary">{game.homeTeam.city}</Text>
             </Stack>
             <Text size="sm" color="secondary">
-              {getSpreadDisplay(odds.spread, true)}
+              {getSpreadDisplay(odds.spread)}
             </Text>
           </Stack>
         </Stack>
@@ -132,12 +117,29 @@ const GameCard = ({ bettingData }: GameCardProps) => {
 
         {/* Status */}
         <Divider spacing="none" />
-        <Badge variant={getStatusBadgeVariant(game.status)} size="sm">
-          {game.status.replace('_', ' ').toUpperCase()}
-        </Badge>
+        <Stack direction="row" justify="between" align="center">
+          <Badge variant={getStatusBadgeVariant(game.status)} size="sm">
+            {game.status.replace('_', ' ').toUpperCase()}
+          </Badge>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? 'Less Details' : 'More Details'}
+          </Button>
+        </Stack>
+
+        {/* Expanded Details */}
+        {isExpanded && (
+          <>
+            <Divider spacing="none" />
+            <GameCardDetails bettingData={bettingData} />
+          </>
+        )}
       </Stack>
     </Card>
   );
 };
 
-export default GameCard;
+export default memo(GameCard);
