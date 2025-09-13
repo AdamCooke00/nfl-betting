@@ -49,7 +49,7 @@ export const Select = ({
           'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
           disabled
             ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
-            : 'hover:border-gray-400',
+            : 'hover:border-gray-400 cursor-pointer',
           className
         )}
       >

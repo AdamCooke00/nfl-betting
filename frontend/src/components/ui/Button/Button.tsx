@@ -21,27 +21,31 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary: cn(
         colors.primary[500],
         'text-white',
-        'hover:bg-blue-600',
-        'focus:bg-blue-700'
+        'hover:bg-blue-600 hover:transform hover:-translate-y-0.5 hover:shadow-lg',
+        'focus:bg-blue-700',
+        'transition-all duration-200 ease-out'
       ),
       secondary: cn(
         colors.neutral[100],
         'text-gray-900',
-        'hover:bg-gray-200',
+        'hover:bg-gray-200 hover:transform hover:-translate-y-0.5 hover:shadow-md',
         'focus:bg-gray-300',
-        'border border-gray-300'
+        'border border-gray-300',
+        'transition-all duration-200 ease-out'
       ),
       ghost: cn(
         'bg-transparent',
         'text-gray-700',
-        'hover:bg-gray-100',
-        'focus:bg-gray-100'
+        'hover:bg-gray-100 hover:transform hover:-translate-y-0.5',
+        'focus:bg-gray-100',
+        'transition-all duration-200 ease-out'
       ),
       danger: cn(
         colors.error[600],
         'text-white',
-        'hover:bg-red-700',
-        'focus:bg-red-800'
+        'hover:bg-red-700 hover:transform hover:-translate-y-0.5 hover:shadow-lg',
+        'focus:bg-red-800',
+        'transition-all duration-200 ease-out'
       ),
     };
 
@@ -58,7 +62,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         className={cn(
           // Base styles
-          'inline-flex items-center justify-center',
+          'inline-flex items-center justify-center cursor-pointer',
           effects.rounded.base,
           typography.weight.medium,
           effects.transition.colors,
